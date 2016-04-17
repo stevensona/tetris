@@ -151,7 +151,7 @@ int piece::getFreeFall()
 	return freeFall;
 }
 
-void piece::render( taskmanager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
+void piece::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
 {
 
 	SDL_Rect destTile;
@@ -468,7 +468,7 @@ bool piece::reset( int id )
 
 }
 
-void piece::renderTarget( taskmanager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
+void piece::renderTarget( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
 {
 
 	SDL_Rect destTile;

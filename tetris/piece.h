@@ -1,5 +1,4 @@
-#ifndef __piece_h__
-#define __piece_h__
+#pragma once
 
 #include "SDL.h"
 #include "board.h"
@@ -35,12 +34,12 @@ private:
 public:
 	piece();
 	int getFreeFall();
-	void render( taskmanager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 );
+	void render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 );
 	void rotate();
 	int getID();
 	bool reset( int id ); //should be called before using and returns false if game over
 	int getTarget(); //returns y value of ghost target thing
-	void renderTarget( taskmanager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 );
+	void renderTarget( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 );
 	int drop( int next );
 	bool update(); //false = new piece
 	void setShape( int id );
@@ -51,6 +50,3 @@ public:
 	void levelUp();
 	int getLevel();
 };
-
-
-#endif

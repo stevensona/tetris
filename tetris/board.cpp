@@ -1,10 +1,10 @@
 #include "board.h"
 
-board *board::pInstance = 0;
+board *board::pInstance = nullptr;
 
 board *board::instance()
 {
-	if( pInstance == 0 )
+	if( pInstance == nullptr )
 		pInstance = new board();
 
 	return pInstance;
@@ -26,7 +26,7 @@ void board::clear()
 	}
 }
 
-void board::render( taskmanager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
+void board::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
 {
 
 	SDL_Rect destTile;
@@ -52,7 +52,7 @@ void board::render( taskmanager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
 
 }
 
-int board::update( taskmanager *tskmgr )
+int board::update( StateManager *tskmgr )
 {
 	int cleared = 0;
 	for( int y = BHEIGHT - 1; y > -1; y-- )
