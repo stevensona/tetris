@@ -12,7 +12,7 @@ enum class Shapes { T, L, J, O, S, Z, I };
 #define shpZ 5
 #define shpI 6
 
-class piece
+class Piece
 {
 private:
 	int shape[ 4 ][ 4 ];
@@ -28,11 +28,14 @@ private:
 	int getWidth();
 	int getHeight();
 	int shapeID;
-	int level;
+	unsigned int level;
 	bool getCollision();
 	int freeFall;
+
+	Board* board;
+
 public:
-	piece();
+	Piece(Board* board);
 	int getFreeFall();
 	void render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 );
 	void rotate();

@@ -1,12 +1,10 @@
 #include "piece.h"
 
-piece::piece()
-{
-	level = 500;
+Piece::Piece(Board* board) : board(board), level(500) {
 	reset( getRandomPiece( -1 ) );
 }
 
-int piece::getTarget()
+int Piece::getTarget()
 {
 	int real = posY;
 	int targ = posY;
@@ -16,28 +14,28 @@ int piece::getTarget()
 	posY = real;
 	return targ;
 }
-void piece::levelUp()
+void Piece::levelUp()
 {
 	if( level > 50 )
 		level -= 50;
 }
 
-int piece::getLevel()
+int Piece::getLevel()
 {
 	return ( ( 500 - level ) / 50 ) + 1;
 }
 
-int piece::getWidth()
+int Piece::getWidth()
 {
 	return getMaxX() - getMinX();
 }
 
-int piece::getHeight()
+int Piece::getHeight()
 {
 	return getMaxY() - getMinY();
 }
 
-int piece::getMaxX()
+int Piece::getMaxX()
 {
 	int max = 0;
 	for( int x = 0; x < 4; x++ )
@@ -49,7 +47,7 @@ int piece::getMaxX()
 	
 }
 
-int piece::getMaxY()
+int Piece::getMaxY()
 {
 	int max = 0;
 	for( int y = 0; y < 4; y++ )
@@ -61,7 +59,7 @@ int piece::getMaxY()
 }
 
 
-int piece::getMinX()
+int Piece::getMinX()
 {
 	int min = 3;
 	for( int x = 3; x > -1; x-- )
@@ -73,7 +71,7 @@ int piece::getMinX()
 	
 }
 
-int piece::getMinY()
+int Piece::getMinY()
 {
 	int min = 3;
 	for( int y = 3; y > -1; y-- )
@@ -84,50 +82,46 @@ int piece::getMinY()
 	return min;
 }
 
-bool piece::getCollision()
+bool Piece::getCollision()
 {
 
 	for( int x = 0; x < 4; x++ )
 		for( int y = 0; y < 4; y++ )
-			if( board::instance()->getBlock( posX + x, posY + y ) != 0 &&
+			if(board->getBlock( posX + x, posY + y ) != 0 &&
 				shape[ x ][ y ] != 0)
 				return true;
-	if( posY + getMaxY() >= BHEIGHT ) return true;
+	if( posY + getMaxY() >= BoardHeight ) return true;
 
 
 	return false;
 
 }
 
-bool piece::update()
+bool Piece::update()
 {
 	int oPosX = posX;
 	if( posX + getMinX() < 0 )
 		posX = 0 - getMinX();
-	if( posX + getMaxX() > BWIDTH - 1 )
-		posX = BWIDTH - 1 - getMaxX();
+	if( posX + getMaxX() > BoardWidth - 1 )
+		posX = BoardWidth - 1 - getMaxX();
 	if( getCollision() ) posX = oPosX;
+
 	int oPosY = posY;
-	if( posY + getMaxY() > BHEIGHT - 1 )
-		posY = BHEIGHT - 1 - getMaxY();
+	if( posY + getMaxY() > BoardHeight - 1 )
+		posY = BoardHeight - 1 - getMaxY();
 	if( posY + getMinY() < 0 )
 		posY = 0 - getMinY();
 	if( getCollision() ) posY = oPosY;
 
 
 
-	if( int( SDL_GetTicks() - lastDrop ) > level )
-	{
-		if( posY + getMaxY() < BHEIGHT - 1 )
-		{
+	if( SDL_GetTicks() - lastDrop > level ) 	{ //Time to make me fall!
+		if( posY + getMaxY() < BoardHeight - 1 ) {
 			posY++;
-			if( getCollision() )
-			{
+			if( getCollision() ) {
 				posY--;
 
-			}
-			else
-			{
+			} else {
 				lastDrop = SDL_GetTicks();
 				lastMove = SDL_GetTicks();
 				freeFall++;
@@ -146,12 +140,12 @@ bool piece::update()
 
 }
 
-int piece::getFreeFall()
+int Piece::getFreeFall()
 {
 	return freeFall;
 }
 
-void piece::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
+void Piece::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
 {
 
 	SDL_Rect destTile;
@@ -177,7 +171,7 @@ void piece::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 
 
 }
 
-void piece::rotate()
+void Piece::rotate()
 {
 	int temp[ 4 ][ 4 ];
 	for( int x = 0; x < 4; x++ )
@@ -405,7 +399,7 @@ void piece::rotate()
 
 }
 
-bool piece::reset( int id )
+bool Piece::reset( int id )
 {
 	freeFall = 0;
 	rotation = 0;
@@ -468,7 +462,7 @@ bool piece::reset( int id )
 
 }
 
-void piece::renderTarget( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
+void Piece::renderTarget( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
 {
 
 	SDL_Rect destTile;
@@ -495,12 +489,12 @@ void piece::renderTarget( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *
 
 }
 
-int piece::getID()
+int Piece::getID()
 {
 	return shapeID;
 }
 
-int piece::drop( int next )
+int Piece::drop( int next )
 {
 	posY = getTarget();
 	addToBoard();
@@ -508,9 +502,9 @@ int piece::drop( int next )
 	return getRandomPiece( shapeID );
 }
 
-void piece::setShape( int id ){}
+void Piece::setShape( int id ){}
 
-void piece::moveRight()
+void Piece::moveRight()
 {
 	posX++;
 	if( getCollision() )
@@ -519,7 +513,7 @@ void piece::moveRight()
 		lastMove = SDL_GetTicks();
 }
 
-void piece::moveLeft()
+void Piece::moveLeft()
 {
 
 	posX--;
@@ -530,7 +524,7 @@ void piece::moveLeft()
 
 }
 
-void piece::moveDown()
+void Piece::moveDown()
 {
 	posY++;
 	if( getCollision() )
@@ -539,10 +533,10 @@ void piece::moveDown()
 		lastMove = SDL_GetTicks();
 }
 
-void piece::addToBoard()
+void Piece::addToBoard()
 {
 	for( int x = 0; x < 4; x++ )
 		for( int y = 0; y < 4; y++ )
 			if( shape[ x ][ y ] != 0 )
-				board::instance()->setBlock( posX + x, posY + y, shape[ x ][ y ] );
+				board->setBlock( posX + x, posY + y, shape[ x ][ y ] );
 }

@@ -4,8 +4,7 @@
 #include "board.h"
 #include "piece.h"
 
-class GameState : public State
-{
+class GameState : public State {
 
 private:
 	void renderPiece( SDL_Surface *screen, int x, int y, int id);
@@ -15,9 +14,10 @@ private:
 	Mix_Chunk *sndSingle, *sndDouble, *sndTriple, *sndTetris;
 	Mix_Chunk *sndHold;
 
-	piece active;
+	Piece active;
+	Board board;
 	int next, hold;
-	bool swapped;
+	bool swappedPiece;
 
 	bool bKeyRight, bKeyLeft, bKeyUp, bKeyDown;
 

@@ -1,5 +1,4 @@
-#ifndef __menu_h__
-#define __menu_h__
+#pragma once
 
 #include "state.h"
 
@@ -31,4 +30,3 @@ public:
 	void draw( StateManager *tskmgr ) override;
 
 };
-#endif

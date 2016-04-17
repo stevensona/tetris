@@ -12,7 +12,7 @@ const int SBITS = 32;
 
 #define WINDOWTITLE "Tetris"
 
-#define BWIDTH		10
-#define BHEIGHT		20
+const int BoardWidth = 10;
+const int BoardHeight = 20;
 
 #define KEYDELAY	100

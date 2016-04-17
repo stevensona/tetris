@@ -60,7 +60,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <AdditionalDependencies>legacy_stdio_definitions.lib;SDLmain.lib;SDL.lib;SDL_image.lib;SDL_ttf.lib;SDL_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -88,32 +88,33 @@
       <AdditionalDependencies>legacy_stdio_definitions.lib;SDLmain.lib;SDL.lib;SDL_image.lib;SDL_ttf.lib;SDL_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\deps\SDL\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="board.cpp" />
+    <ClCompile Include="Board.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="HighscoreState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuState.cpp" />
-    <ClCompile Include="piece.cpp" />
+    <ClCompile Include="Piece.cpp" />
     <ClCompile Include="StateManager.cpp" />
     <ClCompile Include="TitleState.cpp" />
     <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="board.h" />
+    <ClInclude Include="Board.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="HighscoreState.h" />
     <ClInclude Include="MenuState.h" />
-    <ClInclude Include="piece.h" />
+    <ClInclude Include="Piece.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateManager.h" />
     <ClInclude Include="TitleState.h" />

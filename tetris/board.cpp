@@ -1,32 +1,27 @@
 #include "board.h"
 
-board *board::pInstance = nullptr;
+/*Board *Board::pInstance = nullptr;
 
-board *board::instance()
+Board *Board::instance()
 {
 	if( pInstance == nullptr )
-		pInstance = new board();
+		pInstance = new Board();
 
 	return pInstance;
-}
+}*/
 
-board::board()
+Board::Board()
 {
-	clear();
-}
-
-void board::clear()
-{
-	for( int x = 0; x < BWIDTH; x++ )
+	for (int x = 0; x < BoardWidth; x++)
 	{
-		for( int y = 0; y < BHEIGHT; y++ )
+		for (int y = 0; y < BoardHeight; y++)
 		{
-			states[ x ][ y ] = 0;
+			states[x][y] = 0;
 		}
 	}
 }
 
-void board::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
+void Board::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
 {
 
 	SDL_Rect destTile;
@@ -35,9 +30,9 @@ void board::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 
 	srcTile.w = tile1->w; srcTile.h = tile1->h; srcTile.y = tile1->y;
 	destTile.w = tile1->w; destTile.h = tile1->h;
 
-	for( int x = 0; x < BWIDTH; x++ )
+	for( int x = 0; x < BoardWidth; x++ )
 	{
-		for( int y = 0; y < BHEIGHT; y++ )
+		for( int y = 0; y < BoardHeight; y++ )
 		{
 			if( states[ x ][ y ] != 0 )
 			{
@@ -52,20 +47,20 @@ void board::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 
 
 }
 
-int board::update( StateManager *tskmgr )
+int Board::update( StateManager *tskmgr )
 {
 	int cleared = 0;
-	for( int y = BHEIGHT - 1; y > -1; y-- )
+	for( int y = BoardHeight - 1; y > -1; y-- )
 	{
 		bool full = true;
-		for( int x = 0; x < BWIDTH; x++ )
+		for( int x = 0; x < BoardWidth; x++ )
 			if( states[ x ][ y ] == 0 )
 				full = false;
 		if( full == true )
 		{
 			cleared++;
 			for( int k = y; k > 0; k-- )
-				for( int x = 0; x < BWIDTH; x++ )
+				for( int x = 0; x < BoardWidth; x++ )
 				{
 					states[ x ][ k ] = states[ x ][ k - 1 ];
 					states[ x ][ k - 1 ] = 0;
@@ -76,18 +71,18 @@ int board::update( StateManager *tskmgr )
 	return cleared;
 }
 
-int board::getBlock(int x, int y) const
+int Board::getBlock(int x, int y) const
 {
-	if( x > -1 && x < BWIDTH  && y > -1 && y < BHEIGHT )
+	if( x > -1 && x < BoardWidth  && y > -1 && y < BoardHeight )
 		return states[ x ][ y ];
 	else
 		return 0;
 }
 
-void board::setBlock( int x, int y, int color )
+void Board::setBlock( int x, int y, int color )
 {
 
-	if( x > -1 && x < BWIDTH  && y > -1 && y < BHEIGHT )
+	if( x > -1 && x < BoardWidth  && y > -1 && y < BoardHeight )
 		states[ x ][ y ] = color;
 
 }

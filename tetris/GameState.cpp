@@ -8,15 +8,13 @@
 
 using namespace std;
 
-GameState::GameState()
-{
+GameState::GameState() : board(), active(&board) {
 	reseed();
-	board::instance()->clear();
-	active = piece();
+
 	gameOver = !active.reset( getRandomPiece( -1 ) );
 	next = getRandomPiece( active.getID() );
 	hold = -1;
-	swapped = false;
+	swappedPiece = false;
 	score = 0;
 	linesCleared = 0;
 	gameOver = false;
@@ -48,19 +46,13 @@ GameState::GameState()
 	destPause.x = 320 - 200; destPause.y = 240 - 150;
 	destPause.w = 400; destPause.h = 300;
 
-	for( int x = 0; x < BWIDTH; x++ )
-	{
-		for( int y = 0; y < BHEIGHT; y++ )
-		{
-
+	for( int x = 0; x < BoardWidth; x++ ) {
+		for( int y = 0; y < BoardHeight; y++ ) {
 			destTile.x = 192 + 22 * x;
 			destTile.y = 18 + 22 * y;
 			SDL_BlitSurface( gameTiles, &srcBack, gameLayout, &destTile );
-
 		}
 	}
-
-
 }
 
 GameState::~GameState()
@@ -106,154 +98,132 @@ void GameState::renderPiece( SDL_Surface *screen, int x, int y, int id)
 
 void GameState::update( StateManager *tskmgr )
 {
-	
-
 	SDL_Event evnt;
 	SDLKey key;
 
-	while( SDL_PollEvent( &evnt ) )
-	{
-		if( evnt.type == SDL_KEYDOWN )
-		{
+	while( SDL_PollEvent( &evnt ) ) {
+		if( evnt.type == SDL_KEYDOWN ) {
 			key = evnt.key.keysym.sym;
-			if( key == SDLK_p )
+			if (key == SDLK_p) {
 				paused = !paused;
+				return;
+			}
 			if( key == SDLK_ESCAPE )
 				gameOver = true;
 		}
-		if( !paused )
-		{
-			switch( evnt.type )
-			{
+		if( !paused ) {
+			switch( evnt.type ) {
 			
 			case SDL_KEYDOWN:
-				key = evnt.key.keysym.sym;
-
-
-
-				if( key == SDLK_UP )
-				{
+				switch (evnt.key.keysym.sym) {
+				case SDLK_UP:
 					bKeyUp = true;
 					repUp = SDL_GetTicks() - KEYDELAY * 2 - 1;
-				}
-				if( key == SDLK_DOWN )
-				{
+					break;
+				case SDLK_DOWN:
 					bKeyDown = true;
-					repDown = SDL_GetTicks() - int( KEYDELAY * 1.5 ) - 1;
-				}
-				if( key == SDLK_RIGHT )
-				{
+					repDown = SDL_GetTicks() - int(KEYDELAY * 1.5) - 1;
+					break;
+				case SDLK_RIGHT:
 					bKeyRight = true;
-					repRight = SDL_GetTicks() - int( KEYDELAY * 1.5 ) - 1;
-				}
-				if( key == SDLK_LEFT )
-				{
+					repRight = SDL_GetTicks() - int(KEYDELAY * 1.5) - 1;
+					break;
+				case SDLK_LEFT:
 					bKeyLeft = true;
-					repLeft = SDL_GetTicks() - int( KEYDELAY * 1.5 ) - 1;
-				}
-				if( key == SDLK_SPACE )
-				{
-					Mix_PlayChannel( -1, sndDrop, 0 );
-					
-					next = active.drop( next );
-					if( next == -1 )
+					repLeft = SDL_GetTicks() - int(KEYDELAY * 1.5) - 1;
+					break;
+				case SDLK_SPACE:
+					Mix_PlayChannel(-1, sndDrop, 0);
+					next = active.drop(next);
+					if (next == -1)
 						gameOver = true;
-					swapped = false;
-					score += ( ( 21 + ( 3 * active.getLevel() ) ) - active.getFreeFall() );
-				}
-				if( key == SDLK_LSHIFT && !swapped )
-				{
-					Mix_PlayChannel( -1, sndHold, 0 );
-					int temp = active.getID();
-					if( hold != -1 )
-						gameOver = !active.reset( hold );
-					else
-					{
-						gameOver = !active.reset( next );
-						next = getRandomPiece( active.getID() );
-
+					swappedPiece = false;
+					score += ((21 + (3 * active.getLevel())) - active.getFreeFall());
+					break;
+				case SDLK_LSHIFT:
+					if(!swappedPiece) {
+						Mix_PlayChannel(-1, sndHold, 0);
+						int temp = active.getID();
+						if (hold != -1)
+							gameOver = !active.reset(hold);
+						else {
+							gameOver = !active.reset(next);
+							next = getRandomPiece(active.getID());
+						}
+						hold = temp;
+						swappedPiece = true;
 					}
-					hold = temp;
-					swapped = true;
 				}
 				break;
 
 			case SDL_KEYUP:
-				key = evnt.key.keysym.sym;
-
-				if( key == SDLK_UP )
+				switch (evnt.key.keysym.sym) {
+				case SDLK_UP:
 					bKeyUp = false;
-				if( key == SDLK_DOWN )
+					break;
+				case SDLK_DOWN:
 					bKeyDown = false;
-				if( key == SDLK_RIGHT )
+					break;
+				case SDLK_RIGHT:
 					bKeyRight = false;
-				if( key == SDLK_LEFT )
+					break;
+				case SDLK_LEFT:
 					bKeyLeft = false;
+				}
 
-				break;
-
-			default:
-				break;
 			}
 		}
 	}
-	if( !paused )
-	{
-		if( bKeyUp && SDL_GetTicks() - repUp > int( KEYDELAY * 1.5 ) )
-		{
-			Mix_PlayChannel( -1, sndRotate, 0 );
-			repUp = SDL_GetTicks();
-			active.rotate();
-		}
-		if( bKeyDown && SDL_GetTicks() - repDown > int( KEYDELAY * 1.5 ) )
-		{
-			Mix_PlayChannel( -1, sndMove, 0 );
-			repDown = SDL_GetTicks();
-			active.moveDown();
+	if (paused)
+		return;
 
-		}
-		if( bKeyRight && SDL_GetTicks() - repRight > int( KEYDELAY * 1.5 ) )
-		{
-			Mix_PlayChannel( -1, sndMove, 0 );
-			repRight = SDL_GetTicks();
-			active.moveRight();
-
-		}
-		if( bKeyLeft && SDL_GetTicks() - repLeft > int( KEYDELAY * 1.5 ) )
-		{
-			Mix_PlayChannel( -1, sndMove, 0 );
-			repLeft = SDL_GetTicks();
-
-			active.moveLeft();
-		}
-
-		int cleared = board::instance()->update( tskmgr );
-		if( cleared > 0 ) Mix_PlayChannel( -1, sndClear, 0 );
-		if( cleared == 1 ) Mix_PlayChannel( -1, sndSingle, 0 );
-		if( cleared == 2 ) Mix_PlayChannel( -1, sndDouble, 0 );
-		if( cleared == 3 ) Mix_PlayChannel( -1, sndTriple, 0 );
-		if( cleared == 4 ) Mix_PlayChannel( -1, sndTetris, 0 );
-		linesCleared += cleared;
-		if( linesCleared >= 10 )
-		{
-			linesCleared -= 10;
-			active.levelUp();
-		}
-		score += cleared * cleared;
-		if( !active.update() )
-		{
-			gameOver = !active.reset( next );
-			next = getRandomPiece( active.getID() );
-			swapped = false;
-			score += ( ( 21 + ( 3 * active.getLevel() ) ) - active.getFreeFall() );
-		}
+	if( bKeyUp && SDL_GetTicks() - repUp > int( KEYDELAY * 1.5 ) ) {
+		Mix_PlayChannel( -1, sndRotate, 0 );
+		repUp = SDL_GetTicks();
+		active.rotate();
 	}
-	if( gameOver )
+	if( bKeyDown && SDL_GetTicks() - repDown > int( KEYDELAY * 1.5 ) ) {
+		Mix_PlayChannel( -1, sndMove, 0 );
+		repDown = SDL_GetTicks();
+		active.moveDown();
+	}
+	if( bKeyRight && SDL_GetTicks() - repRight > int( KEYDELAY * 1.5 ) ) {
+		Mix_PlayChannel( -1, sndMove, 0 );
+		repRight = SDL_GetTicks();
+		active.moveRight();
+	}
+	if( bKeyLeft && SDL_GetTicks() - repLeft > int( KEYDELAY * 1.5 ) ) {
+		Mix_PlayChannel( -1, sndMove, 0 );
+		repLeft = SDL_GetTicks();
+		active.moveLeft();
+	}
+
+	int cleared = board.update( tskmgr );
+	if( cleared > 0 ) Mix_PlayChannel( -1, sndClear, 0 );
+	if( cleared == 1 ) Mix_PlayChannel( -1, sndSingle, 0 );
+	if( cleared == 2 ) Mix_PlayChannel( -1, sndDouble, 0 );
+	if( cleared == 3 ) Mix_PlayChannel( -1, sndTriple, 0 );
+	if( cleared == 4 ) Mix_PlayChannel( -1, sndTetris, 0 );
+	linesCleared += cleared;
+	if( linesCleared >= 10 )
+	{
+		linesCleared -= 10;
+		active.levelUp();
+	}
+	score += cleared * cleared;
+	if( !active.update() )
+	{
+		gameOver = !active.reset( next );
+		next = getRandomPiece( active.getID() );
+		swappedPiece = false;
+		score += ( ( 21 + ( 3 * active.getLevel() ) ) - active.getFreeFall() );
+	}
+	if (gameOver)
 	{
 		cout << "score = " << score << '\n';
 		//HighscoreState::instance()->setCurrentScore( score );
 		//tskmgr->change(make_shared<HighscoreState>());
-		tskmgr->change( make_shared<MenuState>() );
+		tskmgr->change(make_shared<MenuState>());
 	}
 
 
@@ -262,7 +232,7 @@ void GameState::update( StateManager *tskmgr )
 void GameState::draw(StateManager *tskmgr )
 {
 	SDL_BlitSurface( gameLayout, NULL, tskmgr->screen, NULL );
-	board::instance()->render( tskmgr, gameTiles, &srcTile );
+	board.render( tskmgr, gameTiles, &srcTile );
 	active.renderTarget( tskmgr, gameTiles, &srcTile );
 	active.render( tskmgr, gameTiles, &srcTile );
 	renderPiece( tskmgr->screen, 433, 87, next );

@@ -22,11 +22,8 @@ private:
 
 	TTF_Font *bkFont; //why is this here
 
-	bool mTaskUpdated; //todo remove this
 	bool initText();
 	void closeText();
-
-	
 
 public:
 	StateManager();

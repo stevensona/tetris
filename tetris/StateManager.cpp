@@ -58,12 +58,7 @@ StateManager::~StateManager()
 	Mix_CloseAudio();
 	closeText();
 
-	/*while( !mTasks.empty() ) {
-		mTasks.pop_back();
-	}*/
-	
 	SDL_FreeSurface( screen );
-
 	SDL_Quit();
 
 	cout << "flower stopped\n";
@@ -72,59 +67,40 @@ StateManager::~StateManager()
 
 void StateManager::change(shared_ptr<State> state)
 {
-
 	mTasks.clear();
-
 	mTasks.push_back(state);
-	mTaskUpdated = false;
+	update();
 	SDL_FillRect( screen, NULL, SDL_MapRGB( screen->format, 0, 0, 0 ) );
-
 }
 
 void StateManager::push(shared_ptr<State> state)
 {
-	
-	if( !mTasks.empty() )
+	if (!mTasks.empty()) {
 		mTasks.back()->pause();
-
+	}
 	mTasks.push_back(state);
-	mTaskUpdated = false;
-
 }
 
 void StateManager::pop()
 {
 	mTasks.pop_back();
-	
-	if( !mTasks.empty() )
-	{
+	if(!mTasks.empty()) {
 		mTasks.back()->resume();
-		mTaskUpdated = false;
 	}
 }
 
 void StateManager::update()
 {
-
-	if( !mTasks.empty() )
-	{
-		mTaskUpdated = true;
-		mTasks.back()->update( this );
-		
+	if(!mTasks.empty()) {
+		mTasks.back()->update(this);
 	}
-
 }
 
 void StateManager::draw()
 {
-
-	if( !mTasks.empty() )
-		if( mTaskUpdated == true )
-		{
-			mTasks.back()->draw( this );
-			mTaskUpdated = false;
-		}
-
+	if(!mTasks.empty()) {
+		mTasks.back()->draw(this);
+	}
 }
 
 bool StateManager::initText()
@@ -149,5 +125,4 @@ void StateManager::printString( const char *text, SDL_Rect *destrect, SDL_Color 
 	SDL_Surface *textsurf = TTF_RenderText_Blended( bkFont, text, color );
 	SDL_BlitSurface( textsurf, NULL, screen, destrect );
 	SDL_FreeSurface( textsurf );
-
 }
