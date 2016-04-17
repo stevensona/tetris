@@ -1,15 +1,5 @@
 #include "board.h"
 
-/*Board *Board::pInstance = nullptr;
-
-Board *Board::instance()
-{
-	if( pInstance == nullptr )
-		pInstance = new Board();
-
-	return pInstance;
-}*/
-
 Board::Board()
 {
 	for (int x = 0; x < BoardWidth; x++)

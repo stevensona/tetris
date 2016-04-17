@@ -1,8 +1,8 @@
 #pragma once
 
-const int SWIDTH = 640;
-const int SHEIGHT = 480;
-const int SBITS = 32;
+const int ScreenWidth = 640;
+const int ScreenHeight = 480;
+const int BitDepth = 32;
 #define SFLAGS		SDL_HWSURFACE | SDL_DOUBLEBUF// | SDL_FULLSCREEN
 
 #define ARATE		22050

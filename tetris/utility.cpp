@@ -1,6 +1,7 @@
 //#include "randomc.h"
 #include <random>
 #include <iostream>
+#include <exception>
 #include "SDL.h"
 #include "SDL_image.h"
 #include "utility.h"
@@ -21,10 +22,9 @@ SDL_Surface *loadSDLSurface( const char *file )
 {
 	SDL_Surface *dest = IMG_Load( file );
 
-	if (dest != NULL)
-		cout << "loaded " << file << '\n';
-	else
-		cout << "failed to load " << file << '\n';
+	if (dest == nullptr) {
+		throw(runtime_error("failed to load surface"));
+	}
 
 	return dest;
 }
@@ -32,9 +32,6 @@ SDL_Surface *loadSDLSurface( const char *file )
 void freeSDLSurface( SDL_Surface *surface, const char *file )
 {
 	SDL_FreeSurface( surface );
-
-	cout << "freed " << file << '\n';
-
 
 }
 
@@ -44,14 +41,9 @@ SDL_Color buildSDLColor( const uint8_t R, const uint8_t G, const uint8_t B, cons
 	return{ R, G, B, A };
 }
 
-SDL_Rect buildSDLRect( int x, int y, int w, int h )
+SDL_Rect buildSDLRect(const int16_t x, const int16_t y, const uint16_t w, const uint16_t h )
 {
-	SDL_Rect res;
-	res.x = x;
-	res.y = y;
-	res.w = w;
-	res.h = h;
-	return res;
+	return { x, y, w, h };
 }
 
 int getRandomPiece( int current )
