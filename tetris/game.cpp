@@ -293,7 +293,3 @@ void game::draw( taskmanager *tskmgr )
 	SDL_Flip( tskmgr->screen );
 }
 
-void game::changeTask( taskmanager *tskmgr, task *tsk )
-{
-	tskmgr->changeTask( tsk );
-}

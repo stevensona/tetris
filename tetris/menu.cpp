@@ -152,7 +152,3 @@ void menu::draw( taskmanager *tskmgr )
 
 }
 
-void menu::changeTask( taskmanager *tskmgr, task *tsk )
-{
-	tskmgr->changeTask( tsk );
-}

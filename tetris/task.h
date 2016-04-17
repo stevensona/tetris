@@ -10,7 +10,6 @@ protected:
 	task(){}
 
 public:
-	static task *instance();
 
 	virtual void init() = 0;
 	virtual void cleanUp() = 0;
@@ -26,8 +25,6 @@ public:
 		tskmgr->changeTask( tsk );
 	}
 
-private:
-	static task *pInstance;
 };
 
 #endif

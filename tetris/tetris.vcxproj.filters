@@ -30,12 +30,6 @@
     <ClCompile Include="menu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mersenne.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mother.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="piece.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,9 +60,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="piece.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="randomc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="task.h">

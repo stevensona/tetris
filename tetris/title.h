@@ -1,5 +1,4 @@
-#ifndef __title_h__
-#define __title_h__
+#pragma once
 
 #include "task.h"
 
@@ -20,12 +19,7 @@ public:
 	void update( taskmanager *tskmgr );
 	void draw( taskmanager *tskmgr );
 
-	void changeTask( taskmanager *tskmgr, task *tsk );
-
 private:
 	static title *pInstance;
 
 };
-
-
-#endif

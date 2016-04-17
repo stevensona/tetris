@@ -67,7 +67,3 @@ void title::draw( taskmanager *tskmgr )
 
 }
 
-void title::changeTask( taskmanager *tskmgr, task *tsk )
-{
-	tskmgr->changeTask( tsk );
-}

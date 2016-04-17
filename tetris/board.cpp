@@ -76,7 +76,7 @@ int board::update( taskmanager *tskmgr )
 	return cleared;
 }
 
-int board::getBlock( int x, int y )
+int board::getBlock(int x, int y) const
 {
 	if( x > -1 && x < BWIDTH  && y > -1 && y < BHEIGHT )
 		return states[ x ][ y ];

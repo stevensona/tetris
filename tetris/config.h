@@ -1,5 +1,4 @@
-#ifndef __config_h__
-#define __config_h__
+#pragma once
 
 const int SWIDTH = 640;
 const int SHEIGHT = 480;
@@ -17,5 +16,3 @@ const int SBITS = 32;
 #define BHEIGHT		20
 
 #define KEYDELAY	100
-
-#endif

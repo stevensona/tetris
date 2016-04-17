@@ -102,8 +102,6 @@
     <ClCompile Include="highscore.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />
-    <ClCompile Include="mersenne.cpp" />
-    <ClCompile Include="mother.cpp" />
     <ClCompile Include="piece.cpp" />
     <ClCompile Include="taskmanager.cpp" />
     <ClCompile Include="title.cpp" />
@@ -116,7 +114,6 @@
     <ClInclude Include="highscore.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="piece.h" />
-    <ClInclude Include="randomc.h" />
     <ClInclude Include="task.h" />
     <ClInclude Include="taskmanager.h" />
     <ClInclude Include="title.h" />

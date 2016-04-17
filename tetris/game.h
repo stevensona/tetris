@@ -61,7 +61,6 @@ public:
 	void update( taskmanager *tskmgr );
 	void draw( taskmanager *tskmgr );
 
-	void changeTask( taskmanager *tskmgr, task *tsk );
 
 	
 

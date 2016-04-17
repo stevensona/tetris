@@ -4,6 +4,7 @@
 #include "SDL.h"
 #include "board.h"
 
+enum class Shapes { T, L, J, O, S, Z, I };
 #define shpT 0
 #define shpL 1
 #define shpJ 2

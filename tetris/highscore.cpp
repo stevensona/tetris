@@ -162,8 +162,3 @@ void highscore::setCurrentScore( int score )
 {
 	currentScore = score;
 }
-
-void highscore::changeTask( taskmanager *tskmgr, task *tsk )
-{
-	tskmgr->changeTask( tsk );
-}
