@@ -27,13 +27,13 @@ StateManager::StateManager()
 		throw(runtime_error("font initialization failed"));
 	}
 
-	screen = SDL_SetVideoMode( ScreenWidth, ScreenHeight, BitDepth, SFLAGS );
-	if( screen == nullptr ) {
+	window = SDL_CreateWindow( WINDOWTITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+		ScreenWidth, ScreenHeight, SFLAGS );
+	renderer = SDL_CreateRenderer(window, -1, 0);
+	if( window == nullptr ) {
 		throw(runtime_error("screen initialization failed"));
 	}
 
-
-	SDL_WM_SetCaption( WINDOWTITLE, WINDOWTITLE );
 	mRunning = true;
 
 }
@@ -42,8 +42,8 @@ StateManager::~StateManager()
 {
 	Mix_CloseAudio();
 	closeText();
-
-	SDL_FreeSurface( screen );
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
 	SDL_Quit();
 
 }
@@ -53,7 +53,7 @@ void StateManager::change(shared_ptr<State> state)
 	mTasks.clear();
 	mTasks.push_back(state);
 	update();
-	SDL_FillRect( screen, NULL, SDL_MapRGB( screen->format, 0, 0, 0 ) );
+	SDL_RenderClear(renderer);
 }
 
 void StateManager::push(shared_ptr<State> state)
@@ -75,14 +75,14 @@ void StateManager::pop()
 void StateManager::update()
 {
 	if(!mTasks.empty()) {
-		mTasks.back()->update(this);
+		mTasks.back()->update();
 	}
 }
 
 void StateManager::draw()
 {
 	if(!mTasks.empty()) {
-		mTasks.back()->draw(this);
+		mTasks.back()->draw();
 	}
 }
 
@@ -105,7 +105,9 @@ void StateManager::closeText()
 
 void StateManager::printString( const char *text, SDL_Rect *destrect, SDL_Color color )
 {
-	SDL_Surface *textsurf = TTF_RenderText_Blended( bkFont, text, color );
-	SDL_BlitSurface( textsurf, NULL, screen, destrect );
-	SDL_FreeSurface( textsurf );
+	//SDL_Surface *textsurf = TTF_RenderText_Blended( bkFont, text, color );
+	//SDL_BlitSurface( textsurf, NULL, window, destrect );
+	//SDL_FreeSurface( textsurf );
+
+	//TODO FIX THIS
 }

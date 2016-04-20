@@ -6,18 +6,17 @@ class TitleState : public State
 {
 
 private:
-	SDL_Surface *titleScreen;
+	SDL_Texture *titleScreen;
 
 public:
-	
-	TitleState();
+	TitleState(StateManager *owner);
 	~TitleState();
 
 	void resume() override;
 	void pause() override;
 
-	void update( StateManager *mgr ) override;
-	void draw( StateManager *mgr ) override;
+	void update() override;
+	void draw() override;
 
 
 };

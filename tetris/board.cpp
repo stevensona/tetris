@@ -11,7 +11,7 @@ Board::Board()
 	}
 }
 
-void Board::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
+void Board::render( StateManager *mgr, SDL_Texture *surface, SDL_Rect *tile1 )
 {
 
 	SDL_Rect destTile;
@@ -29,7 +29,7 @@ void Board::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 
 				destTile.x = 192 + 1 + 22 * x;
 				destTile.y = 18 + 1 + 22 * y;
 				srcTile.x = tile1->x + ( tile1->w + 1 ) * ( states[ x ][ y ] - 1 );
-				SDL_BlitSurface( surface, &srcTile, tskmgr->screen, &destTile );
+				SDL_RenderCopy(mgr->renderer, surface, &srcTile, &destTile);
 			}
 
 		}
@@ -37,7 +37,7 @@ void Board::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 
 
 }
 
-int Board::update( StateManager *tskmgr )
+int Board::update()
 {
 	int cleared = 0;
 	for( int y = BoardHeight - 1; y > -1; y-- )

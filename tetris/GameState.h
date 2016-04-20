@@ -7,8 +7,8 @@
 class GameState : public State {
 
 private:
-	void renderPiece( SDL_Surface *screen, int x, int y, int id);
-	SDL_Surface *gameTiles, *gameLayout, *gamePrev, *gamePause;
+	void renderPreview( SDL_Renderer *renderer, int x, int y, int id);
+	SDL_Texture *tiles, *background, *pieces, *paused;
 	SDL_Rect srcTile, destTile, srcBack, destPause;
 	Mix_Chunk *sndRotate, *sndDrop, *sndMove, *sndClear;
 	Mix_Chunk *sndSingle, *sndDouble, *sndTriple, *sndTetris;
@@ -21,7 +21,7 @@ private:
 
 	bool bKeyRight, bKeyLeft, bKeyUp, bKeyDown;
 
-	bool paused;
+	bool isPaused;
 
 	unsigned int repRight, repLeft, repUp, repDown;
 
@@ -30,13 +30,13 @@ private:
 
 public:
 
-	GameState();
+	GameState(StateManager *owner);
 	~GameState();
 
 	void resume() override;
 	void pause() override;
 
-	void update(StateManager *tskmgr) override;
-	void draw(StateManager *tskmgr) override;
+	void update() override;
+	void draw() override;
 
 };

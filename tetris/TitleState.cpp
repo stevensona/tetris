@@ -5,18 +5,19 @@
 
 using namespace std;
 
-TitleState::TitleState() {
-	titleScreen = loadSDLSurface( "data/title.png" );
+TitleState::TitleState(StateManager *owner) {
+	this->owner = owner;
+	titleScreen = loadTexture(owner->renderer, "data/title.png");
 }
 
 TitleState::~TitleState() {
-	freeSDLSurface( titleScreen, "data/title.png");
+	destroyTexture(titleScreen);
 }
 
 void TitleState::resume(){}
 void TitleState::pause(){}
 
-void TitleState::update( StateManager *mgr ) {
+void TitleState::update() {
 
 	SDL_Event evnt;
 	while( SDL_PollEvent( &evnt ) )
@@ -26,18 +27,18 @@ void TitleState::update( StateManager *mgr ) {
 		case SDL_KEYDOWN:
 			switch(evnt.key.keysym.sym) {
 			case SDLK_ESCAPE:
-				mgr->quit();
+				owner->quit();
 				break;
 			case SDLK_RETURN:
-				mgr->change(make_shared<MenuState>());
+				owner->change(make_shared<MenuState>(owner));
 				break;
 			}
 		}
 	}
 }
 
-void TitleState::draw(StateManager *mgr) {
-	SDL_BlitSurface( titleScreen, NULL, mgr->screen, NULL );
-	SDL_Flip( mgr->screen );
+void TitleState::draw() {
+	SDL_RenderCopy(owner->renderer, titleScreen, NULL, NULL);
+	SDL_RenderPresent(owner->renderer);
 }
 

@@ -8,7 +8,8 @@
 
 using namespace std;
 
-GameState::GameState() : board(), active(&board) {
+GameState::GameState(StateManager *owner) : board(), active(&board) {
+	this->owner = owner;
 	reseed();
 
 	gameOver = !active.reset( getRandomPiece( -1 ) );
@@ -22,12 +23,12 @@ GameState::GameState() : board(), active(&board) {
 	bKeyLeft = false;
 	bKeyUp = false;
 	bKeyDown = false;
-	paused = false;
+	isPaused = false;
 
-	gameLayout		= loadSDLSurface( "data/layout.png" );
-	gameTiles		= loadSDLSurface( "data/tile.bmp" );
-	gamePrev		= loadSDLSurface( "data/preview.png" );
-	gamePause		= loadSDLSurface( "data/pause.png" );
+	background		= loadTexture(owner->renderer, "data/layout.png");
+	tiles		= loadTexture(owner->renderer, "data/tile.bmp");
+	pieces		= loadTexture(owner->renderer, "data/preview.png");
+	paused		= loadTexture(owner->renderer, "data/pause.png");
 
 	sndRotate		= Mix_LoadWAV( "data/srotate.wav" );
 	sndDrop			= Mix_LoadWAV( "data/sdrop.wav");
@@ -43,16 +44,18 @@ GameState::GameState() : board(), active(&board) {
 	srcBack.x = 1; srcBack.y = 1; srcBack.w = 23; srcBack.h = 23;
 	destTile.w = 21; destTile.h = 21;
 
-	destPause.x = 320 - 200; destPause.y = 240 - 150;
+	destPause.x = 120; destPause.y = 90;
 	destPause.w = 400; destPause.h = 300;
 
+	/*TODO this creates the gameboard background texture. Can be done in asset
 	for( int x = 0; x < BoardWidth; x++ ) {
 		for( int y = 0; y < BoardHeight; y++ ) {
 			destTile.x = 192 + 22 * x;
 			destTile.y = 18 + 22 * y;
-			SDL_BlitSurface( gameTiles, &srcBack, gameLayout, &destTile );
+			
+			SDL_BlitSurface( tiles, &srcBack, background, &destTile );
 		}
-	}
+	}*/
 }
 
 GameState::~GameState()
@@ -67,17 +70,16 @@ GameState::~GameState()
 	Mix_FreeChunk( sndTetris );
 	Mix_FreeChunk( sndHold );
 
-	freeSDLSurface( gameLayout, "data/layout.png" );
-	freeSDLSurface( gameTiles, "data/tile.bmp" );
-	freeSDLSurface( gamePrev, "data/preview.png" );
-	freeSDLSurface( gamePause, "data/pause.png" );
+	destroyTexture(background);
+	destroyTexture(tiles);
+	destroyTexture(pieces);
+	destroyTexture(paused);
 }
 
 void GameState::resume(){}
 void GameState::pause(){}
 
-void GameState::renderPiece( SDL_Surface *screen, int x, int y, int id)
-{
+void GameState::renderPreview( SDL_Renderer *renderer, int x, int y, int id) {
 
 	SDL_Rect src;
 	SDL_Rect dest;
@@ -92,26 +94,26 @@ void GameState::renderPiece( SDL_Surface *screen, int x, int y, int id)
 	dest.w = 83; dest.h = 83;
 	dest.x = x;
 	dest.y = y;
-	SDL_BlitSurface( gamePrev, &src, screen, &dest );
+	SDL_RenderCopy(renderer, pieces, &src, &dest);
 
 }
 
-void GameState::update( StateManager *tskmgr )
+void GameState::update()
 {
 	SDL_Event evnt;
-	SDLKey key;
+	SDL_Keycode key;
 
 	while( SDL_PollEvent( &evnt ) ) {
 		if( evnt.type == SDL_KEYDOWN ) {
 			key = evnt.key.keysym.sym;
 			if (key == SDLK_p) {
-				paused = !paused;
+				isPaused = !isPaused;
 				return;
 			}
 			if( key == SDLK_ESCAPE )
 				gameOver = true;
 		}
-		if( !paused ) {
+		if( !isPaused ) {
 			switch( evnt.type ) {
 			
 			case SDL_KEYDOWN:
@@ -174,7 +176,7 @@ void GameState::update( StateManager *tskmgr )
 			}
 		}
 	}
-	if (paused)
+	if (isPaused)
 		return;
 
 	if( bKeyUp && SDL_GetTicks() - repUp > int( KEYDELAY * 1.5 ) ) {
@@ -198,7 +200,7 @@ void GameState::update( StateManager *tskmgr )
 		active.moveLeft();
 	}
 
-	int cleared = board.update( tskmgr );
+	int cleared = board.update();
 	if( cleared > 0 ) Mix_PlayChannel( -1, sndClear, 0 );
 	if( cleared == 1 ) Mix_PlayChannel( -1, sndSingle, 0 );
 	if( cleared == 2 ) Mix_PlayChannel( -1, sndDouble, 0 );
@@ -220,23 +222,20 @@ void GameState::update( StateManager *tskmgr )
 	}
 	if (gameOver)
 	{
-		cout << "score = " << score << '\n';
-		//HighscoreState::instance()->setCurrentScore( score );
-		//tskmgr->change(make_shared<HighscoreState>());
-		tskmgr->change(make_shared<MenuState>());
+		owner->change(make_shared<MenuState>(owner));
 	}
 
 
 }
 
-void GameState::draw(StateManager *tskmgr )
+void GameState::draw()
 {
-	SDL_BlitSurface( gameLayout, NULL, tskmgr->screen, NULL );
-	board.render( tskmgr, gameTiles, &srcTile );
-	active.renderTarget( tskmgr, gameTiles, &srcTile );
-	active.render( tskmgr, gameTiles, &srcTile );
-	renderPiece( tskmgr->screen, 433, 87, next );
-	if( hold != -1 ) renderPiece( tskmgr->screen, 541, 87, hold );
+	SDL_RenderCopy(owner->renderer, background, NULL, NULL);
+	board.render(owner, tiles, &srcTile );
+	active.renderTarget(owner->renderer, tiles, &srcTile );
+	active.render( owner->renderer, tiles, &srcTile );
+	renderPreview( owner->renderer, 433, 87, next );
+	if( hold != -1 ) renderPreview(owner->renderer, 541, 87, hold );
 	//char cscore[20];
 	//char clevel[20];
 
@@ -244,12 +243,11 @@ void GameState::draw(StateManager *tskmgr )
 	/*sprintf_s( cscore, sizeof( cscore ), "%i", score );
 	sprintf_s( clevel, sizeof( clevel ), "%i", active.getLevel() );
 	
-	tskmgr->printString( cscore, &buildSDLRect( 465, 265, 129, 30), buildSDLColor( 255, 221, 0, 255 ) );
-	tskmgr->printString( clevel, &buildSDLRect( 465, 362, 129, 30), buildSDLColor( 255, 221, 0, 255 ) );*/
+	mgr->printString( cscore, &buildSDLRect( 465, 265, 129, 30), buildSDLColor( 255, 221, 0, 255 ) );
+	mgr->printString( clevel, &buildSDLRect( 465, 362, 129, 30), buildSDLColor( 255, 221, 0, 255 ) );*/
 
-	if( paused )
-		SDL_BlitSurface( gamePause, NULL, tskmgr->screen, &destPause );
-
-	SDL_Flip( tskmgr->screen );
+	if (isPaused)
+		SDL_RenderCopy(owner->renderer, paused, NULL, &destPause);
+	SDL_RenderPresent(owner->renderer);
 }
 

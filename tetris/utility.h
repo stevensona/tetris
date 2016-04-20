@@ -1,8 +1,8 @@
 #pragma once
 
-SDL_Surface *loadSDLSurface( const char *file );
+SDL_Texture *loadTexture(SDL_Renderer *renderer, const char *file);
 
-void freeSDLSurface( SDL_Surface *surface, const char *file );
+void destroyTexture( SDL_Texture *texture);
 
 SDL_Color buildSDLColor(const uint8_t R, const uint8_t G, const uint8_t B, const uint8_t A);
 

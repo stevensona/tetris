@@ -1,9 +1,11 @@
+#define SDL_MAIN_HANDLED
 #include <iostream>
 #include <memory>
 
 #include "StateManager.h"
 #include "State.h"
 #include "TitleState.h"
+
 
 using namespace std;
 
@@ -13,7 +15,7 @@ int main( int argc, char *argv[] )
 	unsigned int end;
 	try {
 		StateManager mgr;
-		mgr.change(make_shared<TitleState>());
+		mgr.change(make_shared<TitleState>(&mgr));
 	
 		while(mgr.running()) {
 			start = SDL_GetTicks();

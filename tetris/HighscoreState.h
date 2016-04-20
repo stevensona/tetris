@@ -13,8 +13,7 @@ struct savedScore
 class HighscoreState : public State
 {
 private:
-	SDL_Surface *hsBack;
-	SDL_Surface *hsEYN;
+	SDL_Texture *hsBack, *hsEYN;
 	std::ofstream fileout;
 	std::ifstream filein;
 	savedScore scores[6];
@@ -23,14 +22,14 @@ private:
 
 public:
 
-	HighscoreState();
+	HighscoreState(StateManager *owner);
 	~HighscoreState();
 
 	void resume() override;
 	void pause() override;
 
-	void update( StateManager *tskmgr ) override;
-	void draw( StateManager *tskmgr ) override;
+	void update() override;
+	void draw() override;
 
 	void setCurrentScore( int score );
 

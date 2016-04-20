@@ -50,6 +50,7 @@ public:
 
 	void printString( const char *text, SDL_Rect *destrect, SDL_Color color );
 
-	SDL_Surface *screen;
+	SDL_Window *window;
+	SDL_Renderer *renderer;
 
 };

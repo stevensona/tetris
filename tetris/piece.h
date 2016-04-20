@@ -1,9 +1,10 @@
 #pragma once
 
 #include "SDL.h"
-#include "board.h"
+#include "Board.h"
 
-enum class Shapes { T, L, J, O, S, Z, I };
+enum class Shapes { T, L, J, O, S, Z, I }; //TODO
+enum class Colors {}; //TODO
 #define shpT 0
 #define shpL 1
 #define shpJ 2
@@ -37,12 +38,12 @@ private:
 public:
 	Piece(Board* board);
 	int getFreeFall();
-	void render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 );
+	void render(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect *tile1);
 	void rotate();
 	int getID();
 	bool reset( int id ); //should be called before using and returns false if game over
 	int getTarget(); //returns y value of ghost target thing
-	void renderTarget( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 );
+	void renderTarget(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect *tile1 );
 	int drop( int next );
 	bool update(); //false = new piece
 	void setShape( int id );

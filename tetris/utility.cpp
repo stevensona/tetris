@@ -6,7 +6,7 @@
 #include "SDL_image.h"
 #include "utility.h"
 
-extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; } //HACK for precompiled SDL1.2 on vs2015
+//extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; } //HACK for precompiled SDL1.2 on vs2015
 
 std::default_random_engine rng;
 std::uniform_int_distribution<int> dist(0, 6);
@@ -18,7 +18,7 @@ void reseed()
 	rng.seed(SDL_GetTicks());
 }
 
-SDL_Surface *loadSDLSurface( const char *file )
+SDL_Texture *loadTexture(SDL_Renderer *renderer, const char *file )
 {
 	SDL_Surface *dest = IMG_Load( file );
 
@@ -26,13 +26,11 @@ SDL_Surface *loadSDLSurface( const char *file )
 		throw(runtime_error("failed to load surface"));
 	}
 
-	return dest;
+	return SDL_CreateTextureFromSurface(renderer, dest);
 }
 
-void freeSDLSurface( SDL_Surface *surface, const char *file )
-{
-	SDL_FreeSurface( surface );
-
+void destroyTexture(SDL_Texture *texture) {
+	SDL_DestroyTexture(texture);
 }
 
 SDL_Color buildSDLColor( const uint8_t R, const uint8_t G, const uint8_t B, const uint8_t A )

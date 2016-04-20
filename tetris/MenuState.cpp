@@ -8,11 +8,11 @@
 using namespace std;
 
 
-MenuState::MenuState()
+MenuState::MenuState(StateManager *owner)
 {
-
-	menuBackground	= loadSDLSurface( "data/menu.png" );
-	menuButtons		= loadSDLSurface( "data/buttons.png" );
+	this->owner = owner;
+	menuBackground	= loadTexture(owner->renderer, "data/menu.png" );
+	menuButtons		= loadTexture(owner->renderer, "data/buttons.png" );
 
 	sndMove			=  Mix_LoadWAV( "data/smenu.wav");
 	sndSelect		= Mix_LoadWAV( "data/sselect.wav");
@@ -46,21 +46,21 @@ MenuState::MenuState()
 MenuState::~MenuState()
 {
 
-	Mix_FreeChunk( sndMove );
-	Mix_FreeChunk( sndSelect );
-	freeSDLSurface( menuBackground, "data/menu.png" );
-	freeSDLSurface( menuButtons,	"data/buttons.png" );
+	Mix_FreeChunk(sndMove );
+	Mix_FreeChunk(sndSelect );
+	destroyTexture(menuBackground);
+	destroyTexture(menuButtons);
 
 }
 
 void MenuState::resume(){}
 void MenuState::pause(){}
 
-void MenuState::update( StateManager *tskmgr )
+void MenuState::update()
 {
 	
 	SDL_Event evnt;
-	SDLKey key;
+	SDL_Keycode key;
 	while( SDL_PollEvent( &evnt ) )
 	{
 		switch( evnt.type )
@@ -70,7 +70,7 @@ void MenuState::update( StateManager *tskmgr )
 			key = evnt.key.keysym.sym;
 
 			if( key == SDLK_ESCAPE )
-				tskmgr->change(make_shared<TitleState>());
+				owner->change(make_shared<TitleState>(owner));
 
 			if( key == SDLK_RETURN || key == SDLK_SPACE )
 			{
@@ -78,14 +78,14 @@ void MenuState::update( StateManager *tskmgr )
 				switch( selection )
 				{
 				case 1:
-					tskmgr->change(make_shared<GameState>());
+					owner->change(make_shared<GameState>(owner));
 					break;
 				case 2:
 					//HighscoreState::instance()->setCurrentScore(-1);
-					//tskmgr->changeTask(make_shared<HighscoreState>());
+					//owner->changeTask(make_shared<HighscoreState>());
 					break;
 				case 3:
-					tskmgr->quit();
+					owner->quit();
 					break;
 				}
 			}
@@ -114,31 +114,36 @@ void MenuState::update( StateManager *tskmgr )
 
 }
 
-void MenuState::draw( StateManager *tskmgr )
+void MenuState::draw()
 {
-	SDL_BlitSurface( menuBackground, NULL, tskmgr->screen, NULL );
+	SDL_RenderCopy(owner->renderer, menuBackground, NULL, NULL);
+	//SDL_BlitSurface( menuBackground, NULL, owner->window, NULL );
 	switch( selection )
 	{
 	case 1:
-		SDL_BlitSurface( menuButtons, &b1d, tskmgr->screen, &b1t );
-		SDL_BlitSurface( menuButtons, &b2u, tskmgr->screen, &b2t );
-		SDL_BlitSurface( menuButtons, &b3u, tskmgr->screen, &b3t );
+		SDL_RenderCopy(owner->renderer, menuButtons, &b1d, &b1t);
+		SDL_RenderCopy(owner->renderer, menuButtons, &b2u, &b2t);
+		SDL_RenderCopy(owner->renderer, menuButtons, &b3u, &b3t);
+		/*SDL_BlitSurface( menuButtons, &b1d, owner->window, &b1t );
+		SDL_BlitSurface( menuButtons, &b2u, owner->window, &b2t );
+		SDL_BlitSurface( menuButtons, &b3u, owner->window, &b3t );*/
 		break;
 	case 2:
-		SDL_BlitSurface( menuButtons, &b1u, tskmgr->screen, &b1t );
-		SDL_BlitSurface( menuButtons, &b2d, tskmgr->screen, &b2t );
-		SDL_BlitSurface( menuButtons, &b3u, tskmgr->screen, &b3t );
+		SDL_RenderCopy(owner->renderer, menuButtons, &b1u, &b1t);
+		SDL_RenderCopy(owner->renderer, menuButtons, &b2d, &b2t);
+		SDL_RenderCopy(owner->renderer, menuButtons, &b3u, &b3t);
+
 		break;
 	case 3:
-		SDL_BlitSurface( menuButtons, &b1u, tskmgr->screen, &b1t );
-		SDL_BlitSurface( menuButtons, &b2u, tskmgr->screen, &b2t );
-		SDL_BlitSurface( menuButtons, &b3d, tskmgr->screen, &b3t );
+		SDL_RenderCopy(owner->renderer, menuButtons, &b1u, &b1t);
+		SDL_RenderCopy(owner->renderer, menuButtons, &b2u, &b2t);
+		SDL_RenderCopy(owner->renderer, menuButtons, &b3d, &b3t);
 		break;
 	default:
 		selection = 1;
 		break;
 	}
-	SDL_Flip( tskmgr->screen );
+	SDL_RenderPresent(owner->renderer);
 
 }
 

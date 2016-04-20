@@ -4,17 +4,15 @@
 
 using namespace std;
 
-HighscoreState::HighscoreState()
-{
-	currentScore = 0;
-	scoreSlot = 0;
+HighscoreState::HighscoreState(StateManager *owner): currentScore(0), scoreSlot(0) {
+	this->owner = owner;
 	filein.open( "data/tetris.highscores", std::ios::binary );
 	for( int i = 0; i < 6; i++ )
 		filein.read( ( char * ) ( &scores[i] ), sizeof( scores[i] ) );
 	filein.close();
 
-	hsBack = loadSDLSurface( "data/highscore.png" );
-	hsEYN = loadSDLSurface( "data/eyn.png" );
+	hsBack = loadTexture(owner->renderer, "data/highscore.png");
+	hsEYN = loadTexture(owner->renderer, "data/eyn.png");
 
 	if( currentScore != -1 )
 	{
@@ -35,18 +33,18 @@ HighscoreState::HighscoreState()
 
 HighscoreState::~HighscoreState()
 {
-	freeSDLSurface( hsBack, "data/highscore.png" );
-	freeSDLSurface( hsEYN, "data/eyn.png" );
+	destroyTexture(hsBack);
+	destroyTexture(hsEYN);
 	
 }
 
 void HighscoreState::resume(){}
 void HighscoreState::pause(){}
 
-void HighscoreState::update( StateManager *tskmgr )
+void HighscoreState::update()
 {
 	SDL_Event evnt;
-	SDLKey key;
+	SDL_Keycode key;
 
 	while( SDL_PollEvent( &evnt ) )
 	{
@@ -55,7 +53,7 @@ void HighscoreState::update( StateManager *tskmgr )
 			key = evnt.key.keysym.sym;
 
 			if( key == SDLK_ESCAPE )
-				tskmgr->change(make_shared<MenuState>() );
+				owner->change(make_shared<MenuState>(owner) );
 			if( currentScore == -2 )
 			{
 				if( key == SDLK_BACKSPACE )
@@ -123,23 +121,23 @@ void HighscoreState::update( StateManager *tskmgr )
 
 }
 
-void HighscoreState::draw( StateManager *tskmgr )
+void HighscoreState::draw()
 {
-	SDL_BlitSurface( hsBack, NULL, tskmgr->screen, NULL );
+	SDL_RenderCopy(owner->renderer, hsBack, NULL, NULL);
 	for( int i = 0;i < 6; i++ )
 	{
 		//char cscore[20];
 		//TODO fix
 		/*
 		sprintf_s( cscore, sizeof( cscore ), "%i", scores[i].score );
-		tskmgr->printString( scores[i].name.c_str(), &buildSDLRect( 80, 175 + 40 * i, 300, 300), buildSDLColor( 255, 221, 0, 255 ) );
+		mgr->printString( scores[i].name.c_str(), &buildSDLRect( 80, 175 + 40 * i, 300, 300), buildSDLColor( 255, 221, 0, 255 ) );
 	
-		tskmgr->printString( cscore, &buildSDLRect( 350, 175 + 40 * i, 300, 300), buildSDLColor( 255, 221, 0, 255 ) );*/
+		mgr->printString( cscore, &buildSDLRect( 350, 175 + 40 * i, 300, 300), buildSDLColor( 255, 221, 0, 255 ) );*/
 
 	}
-	if( currentScore == -2 )
-		SDL_BlitSurface( hsEYN, NULL, tskmgr->screen, &buildSDLRect( 0, 480 - 88, 640, 88 ) );
-	SDL_Flip( tskmgr->screen );
+	if (currentScore == -2)
+		SDL_RenderCopy(owner->renderer, hsEYN, NULL, &buildSDLRect(0, 480 - 88, 640, 88));
+	SDL_RenderPresent(owner->renderer);
 
 }
 

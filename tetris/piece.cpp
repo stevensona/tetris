@@ -145,7 +145,7 @@ int Piece::getFreeFall()
 	return freeFall;
 }
 
-void Piece::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
+void Piece::render(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect *tile1 )
 {
 
 	SDL_Rect destTile;
@@ -163,7 +163,7 @@ void Piece::render( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 
 				destTile.x = 192 + 1 + 22 * posX + 22 * x;
 				destTile.y = 18 + 1 + 22 * posY + 22 * y;
 				srcTile.x = tile1->x + ( tile1->w + 1 ) * ( shape[ x ][ y ] - 1 );
-				SDL_BlitSurface( surface, &srcTile, tskmgr->screen, &destTile );
+				SDL_RenderCopy(renderer, texture, &srcTile, &destTile);
 			}
 
 		}
@@ -175,8 +175,7 @@ void Piece::rotate()
 {
 	int temp[ 4 ][ 4 ];
 	for( int x = 0; x < 4; x++ )
-		for( int y = 0; y < 4; y++ )
-		{
+		for( int y = 0; y < 4; y++ ) {
 			temp[ x ][ y ] = shape[ x ][ y ];
 			shape[ x ][ y ] = 0;
 		}
@@ -187,29 +186,22 @@ void Piece::rotate()
 	switch( shapeID )
 	{
 	case shpT:
-		if( rotation == 0 )
-		{
+		if( rotation == 0 )	{
 			shape[2][1] = 3;
 			shape[1][1] = 3;
 			shape[3][1] = 3;
 			shape[2][2] = 3;
-		}
-		if( rotation == 1 )
-		{
+		} else if( rotation == 1 ) {
 			shape[2][1] = 3;
 			shape[2][0] = 3;
 			shape[2][2] = 3;
 			shape[3][1] = 3;
-		}
-		if( rotation == 2 )
-		{
+		} else if( rotation == 2 ) {
 			shape[2][1] = 3;
 			shape[2][0] = 3;
 			shape[3][1] = 3;
 			shape[1][1] = 3;
-		}
-		if( rotation == 3 )
-		{
+		} else if( rotation == 3 ) {
 			shape[2][1] = 3;
 			shape[1][1] = 3;
 			shape[2][0] = 3;
@@ -218,29 +210,22 @@ void Piece::rotate()
 		break;
 
 	case shpL:
-		if( rotation == 0 )
-		{
+		if( rotation == 0 ) {
 			shape[2][1] = 1;
 			shape[1][1] = 1;
 			shape[1][2] = 1;
 			shape[3][1] = 1;
-		}
-		if( rotation == 1 )
-		{
+		} else if( rotation == 1 ) {
 			shape[2][1] = 1;
 			shape[2][0] = 1;
 			shape[2][2] = 1;
 			shape[3][2] = 1;
-		}
-		if( rotation == 2 )
-		{
+		} else if( rotation == 2 ) {
 			shape[2][1] = 1;
 			shape[1][1] = 1;
 			shape[3][1] = 1;
 			shape[3][0] = 1;
-		}
-		if( rotation == 3 )
-		{
+		} else if( rotation == 3 ) {
 			shape[2][1] = 1;
 			shape[2][0] = 1;
 			shape[1][0] = 1;
@@ -249,29 +234,22 @@ void Piece::rotate()
 		break;
 
 	case shpJ:
-		if( rotation == 0 )
-		{
+		if( rotation == 0 ) {
 			shape[2][1] = 2;
 			shape[1][1] = 2;
 			shape[3][2] = 2;
 			shape[3][1] = 2;
-		}
-		if( rotation == 1 )
-		{
+		} else if( rotation == 1 ) {
 			shape[2][1] = 2;
 			shape[2][0] = 2;
 			shape[3][0] = 2;
 			shape[2][2] = 2;
-		}
-		if( rotation == 2 )
-		{
+		} else if( rotation == 2 ) {
 			shape[2][1] = 2;
 			shape[1][1] = 2;
 			shape[3][1] = 2;
 			shape[1][0] = 2;
-		}
-		if( rotation == 3 )
-		{
+		} else if( rotation == 3 ) {
 			shape[2][1] = 2;
 			shape[2][0] = 2;
 			shape[2][2] = 2;
@@ -287,29 +265,22 @@ void Piece::rotate()
 		break;
 
 	case shpS:
-		if( rotation == 0 )
-		{
+		if( rotation == 0 ) {
 			shape[2][1] = 6;
 			shape[3][1] = 6;
 			shape[2][2] = 6;
 			shape[1][2] = 6;
-		}
-		if( rotation == 1 )
-		{
+		} else if( rotation == 1 ) {
 			shape[2][1] = 6;
 			shape[2][0] = 6;
 			shape[3][1] = 6;
 			shape[3][2] = 6;
-		}
-		if( rotation == 2 )
-		{
+		} else if( rotation == 2 ) {
 			shape[2][1] = 6;
 			shape[3][1] = 6;
 			shape[2][2] = 6;
 			shape[1][2] = 6;
-		}
-		if( rotation == 3 )
-		{
+		} else if( rotation == 3 ) {
 			shape[2][1] = 6;
 			shape[2][0] = 6;
 			shape[3][1] = 6;
@@ -462,15 +433,15 @@ bool Piece::reset( int id )
 
 }
 
-void Piece::renderTarget( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *tile1 )
-{
+void Piece::renderTarget(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect *tile1) {
 
 	SDL_Rect destTile;
 	SDL_Rect srcTile;
 	int targY = getTarget();
 	srcTile.w = tile1->w; srcTile.h = tile1->h; srcTile.y = tile1->y;
 	destTile.w = tile1->w; destTile.h = tile1->h;
-	SDL_SetAlpha( surface, SDL_RLEACCEL | SDL_SRCALPHA, 128 );
+	//TODO make slightly transparent
+	SDL_SetTextureAlphaMod( texture, 128 );
 	for( int x = 0; x < 4; x++ )
 	{
 		for( int y = 0; y < 4; y++ )
@@ -480,12 +451,13 @@ void Piece::renderTarget( StateManager *tskmgr, SDL_Surface *surface, SDL_Rect *
 				destTile.x = 192 + 1 + 22 * posX + 22 * x;
 				destTile.y = 18 + 1 + 22 * targY + 22 * y;
 				srcTile.x = tile1->x + ( tile1->w + 1 ) * ( 7 );
-				SDL_BlitSurface( surface, &srcTile, tskmgr->screen, &destTile );
+				SDL_RenderCopy(renderer, texture, &srcTile, &destTile);
 			}
 
 		}
 	}
-	SDL_SetAlpha( surface, 0, 255 );
+	SDL_SetTextureAlphaMod(texture, 255);
+
 
 }
 
