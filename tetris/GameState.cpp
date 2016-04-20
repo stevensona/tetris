@@ -26,7 +26,7 @@ GameState::GameState(StateManager *owner) : board(), active(&board) {
 	isPaused = false;
 
 	background		= loadTexture(owner->renderer, "data/layout.png");
-	tiles		= loadTexture(owner->renderer, "data/tile.bmp");
+	tiles		= loadTexture(owner->renderer, "data/tile.png");
 	pieces		= loadTexture(owner->renderer, "data/preview.png");
 	paused		= loadTexture(owner->renderer, "data/pause.png");
 
